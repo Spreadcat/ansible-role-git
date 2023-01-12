@@ -1,0 +1,54 @@
+---
+- hosts: all
+  gather_facts: true
+  tasks:
+    - name: MOLECULE - LOAD VARIABLES
+      ansible.builtin.include_vars: ./variables.yml
+
+    - name: MOLECULE - UPDATE APT CACHE
+      ansible.builtin.apt:
+        cache_valid_time: 3600
+        update_cache: true
+      when:
+        - ansible_os_family|lower == 'debian'
+
+    - name: MOLECULE - INSTALL GIT
+      ansible.builtin.package:
+        name: git
+        state: present
+
+    - name: MOLECULE - ENSURE CLEAN REPOSITORY STATE
+      ansible.builtin.file:
+        state: absent
+        path: /tmp/git
+
+    - name: MOLECULE - CREATE GIT REPOSITORY LOCATION
+      ansible.builtin.file:
+        state: directory
+        path: /tmp/git
+        owner: "{{ git_repository_owner }}"
+        group: "{{ git_repository_group }}"
+        mode: '0750'
+
+    - name: MOLECULE - CREATE LOCAL GIT REPOSITORY
+      ansible.builtin.command:
+        cmd: git init
+        chdir: /tmp/git
+        creates: /tmp/git/.git
+
+    - name: MOLECULE - CREATE EXAMPLE FILE
+      ansible.builtin.file:
+        path: /tmp/git/testfile
+        state: touch
+      register: _testfile
+
+    - name: MOLECULE - COMMIT FILE
+      when: _testfile.changed
+      ansible.builtin.command:
+        cmd: "{{ item }}"
+        chdir: /tmp/git
+      loop:
+        - git add testfile
+        - git config user.name testuser
+        - git config user.email testuser@localhost
+        - "git commit -m 'Initial commit'"

@@ -1,0 +1,36 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: true
+  tasks:
+
+    - name: INCLUDE VARS
+      ansible.builtin.include_vars: "{{ item }}"
+      loop:
+        - ../../defaults/main.yml
+        - ./variables.yml
+        - "../../defaults/{{ ansible_os_family|lower }}.yml"
+
+    - name: MOLECULE - CHECK PACKAGE IS INSTALLED
+      become: true
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: "{{ git_package_state }}"
+      register: _verify_package_installed
+      failed_when: (
+        (_verify_package_installed is changed) or
+        (_verify_package_installed is failed)
+        )
+      loop: "{{ git_package_name }}"
+
+    - name: MOLECULE - CHECK LOCAL REPO DIRECTORY
+      ansible.builtin.file:
+        state: directory
+        path: "{{ git_repository_directory }}"
+        owner: "{{ git_repository_owner }}"
+        group: "{{ git_repository_group }}"
+        mode: "{{ git_repository_mode }}"
+      register: _verify_file
+      failed_when: (_verify_file is changed) or (_verify_file is failed)

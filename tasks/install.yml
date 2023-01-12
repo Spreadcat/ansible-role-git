@@ -1,0 +1,37 @@
+---
+- name: SET GIT PACKAGE STATE
+  when: git_package_state == 'present'
+  ansible.builtin.set_fact:
+    _git_package_state: true
+    cachable: true
+
+- name: INSTALL GIT
+  when: _git_package_state is defined
+  block:
+    - name: UPDATE APT CACHE
+      ansible.builtin.apt:
+        cache_valid_time: 3600
+        update_cache: true
+      changed_when: false
+      when:
+        - ansible_os_family|lower == 'debian'
+
+    - name: CREATE REPOSITORY DIRECTORY
+      become: true
+      ansible.builtin.file:
+        state: directory
+        path: '{{ git_repository_directory }}'
+        owner: '{{ git_repository_owner }}'
+        group: '{{ git_repository_group }}'
+        mode: '{{ git_repository_mode }}'
+      when:
+        - git_repository_directory is defined
+        - git_repository_directory|length > 0
+
+- name: MANAGE PACKAGES
+  become: true
+  ansible.builtin.package:
+    name: '{{ item }}'
+    state: '{{ git_package_state }}'
+  with_items: '{{ git_package_name }}'
+...

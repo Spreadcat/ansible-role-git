@@ -1,0 +1,13 @@
+---
+- hosts: all
+  gather_facts: true
+  tasks:
+
+    - name: MOLECULE - INCLUDE VARIABLES
+      ansible.builtin.include_vars: ./variables.yml
+
+    - name: MOLECULE - DEPLOY GIT STANDARD
+      ansible.builtin.include_role:
+        name: spreadcat.git
+      vars:
+        git_package_state: present

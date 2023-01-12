@@ -1,0 +1,7 @@
+---
+git_repository_owner: root
+git_repository_group: root
+git_repository_directories: ""
+git_bare_repositories:
+  - dest: /root/git_repos/git_bare
+  - dest: /root/git_repos/new_bare/one

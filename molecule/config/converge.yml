@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: INCLUDE VARIABLES
+      ansible.builtin.include_vars: ./variables.yml
+    - name: FRAMEWORK - INCLUDE ROLE
+      ansible.builtin.include_role:
+        name: spreadcat.git

@@ -1,0 +1,28 @@
+---
+# Default global config file for git
+git_config_global: []
+
+# Default state for the packages.
+git_package_state: present
+
+# Default owner for the repositories
+git_repository_owner: "{{ lookup('env', 'USER') }}"
+
+# Default group for the repositories.
+git_repository_group: "{{ lookup('env', 'USER') }}"
+
+# Default repository file mode
+git_repository_mode: '0750'
+
+# Default value for the timeout of a git clone in seconds
+git_repository_clone_timeout: 20
+
+# List of remote repositories to clone down.
+git_remote_repositories: []
+
+# List of bare repositories to create
+git_bare_repositories: []
+
+# Default directory for remote repositories
+git_repository_directory: "{{ lookup('env', 'HOME') }}/git_repos"
+...

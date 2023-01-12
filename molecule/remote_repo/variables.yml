@@ -1,0 +1,10 @@
+---
+git_repository_directory: /root/git
+git_repository_owner: root
+git_repository_group: root
+git_remote_repositories:
+  - name: test_repo
+    repo: /tmp/git
+    config:
+      user.name: 'John Doe'
+      user.email: 'john.doe@example.com'

@@ -1,0 +1,88 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: true
+  tasks:
+
+    - name: INCLUDE VARS
+      ansible.builtin.include_vars: "{{ item }}"
+      loop:
+        - ../../defaults/main.yml
+        - ./variables.yml
+        - "../../defaults/{{ ansible_os_family|lower }}.yml"
+
+    - name: MOLECULE - CHECK PACKAGE IS INSTALLED
+      become: true
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: "{{ git_package_state }}"
+      register: _verify_package_installed
+      failed_when: (
+        (_verify_package_installed is changed) or
+        (_verify_package_installed is failed)
+        )
+      loop: "{{ git_package_name }}"
+
+    - name: MOLECULE - CHECK LOCAL REPO DIRECTORY
+      ansible.builtin.file:
+        state: directory
+        path: "{{ git_repository_directory }}"
+        owner: "{{ git_repository_owner }}"
+        group: "{{ git_repository_group }}"
+        mode: "{{ git_repository_mode }}"
+      register: _verify_file
+      failed_when: (_verify_file is changed) or (_verify_file is failed)
+
+    - name: MOLECULE - STAT BARE REPOSITORY CREATION
+      ansible.builtin.file:
+        state: directory
+        path: "{{ item.dest }}"
+        owner: "{{ git_repository_owner }}"
+        group: "{{ git_repository_group }}"
+      register: _verify_directory
+      failed_when: (
+        (_verify_directory is changed) or
+        (_verify_directory is failed)
+        )
+      loop: "{{ git_bare_repositories }}"
+
+    - name: MOLECULE - GLOBAL CONFIG FILE CONTENT
+      community.general.git_config:
+        state: "{{ item.state | default(omit) }}"
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        scope: global
+      become: true
+      become_user: "{{ git_repository_owner }}"
+      check_mode: true
+      register: _verify_file
+      loop: "{{ git_config_global }}"
+      failed_when: (_verify_file is changed) or (_verify_file is failed)
+
+    - name: MOLECULE - VERIFY REMOTE REPOSITORIES
+      ansible.builtin.file:
+        path: "{{ item.dest | default(git_repository_directory + '/' + item['name']) }}/.git"  # yamllint disable-line rule:line-length
+        owner: "{{ git_repository_owner }}"
+        group: "{{ git_repository_group }}"
+      check_mode: true
+      register: _verify_file
+      loop: "{{ git_remote_repositories }}"
+
+    - name: MOLECULE - VERIFY REMOTE REPOSITORY CONFIG
+      become: true
+      become_user: "{{ git_repository_owner }}"
+      community.general.git_config:
+        state: present
+        name: user.name
+        value: John Doe
+        scope: local
+        repo: "{{ item.dest | default(git_repository_directory + '/' + item['name']) }}/.git"  # yamllint disable-line rule:line-length
+      check_mode: true
+      register: _verify_git_config
+      failed_when: (
+        (_verify_git_config is changed) or
+        (_verify_git_config is failed)
+        )
+      loop: "{{ git_remote_repositories }}"

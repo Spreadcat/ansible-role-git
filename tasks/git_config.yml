@@ -1,0 +1,11 @@
+---
+- name: 'SET GIT CONFIG FOR REMOTE REPOSITORY {{ git_config_local.name }}'
+  community.general.git_config:
+    name: "{{ item.key }}"
+    scope: local
+    value: "{{ item.value }}"
+    repo: "{{ git_config_local.dest | default(git_repository_directory + '/' + git_config_local.name) }}"  # yamllint disable-line rule:line-length
+  loop: '{{ git_config_local.config | dict2items }}'
+  become_user: "{{ git_repository_owner }}"  # Required, change fails otherwise
+  become: true
+...

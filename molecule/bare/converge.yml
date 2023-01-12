@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  pre_tasks:
+    - name: MOLECULE _ INCLUDE VARIABLES
+      ansible.builtin.include_vars: ./variables.yml
+  tasks:
+    - name: MOLECULE - INCLUDE ROLE
+      ansible.builtin.include_role:
+        name: "spreadcat.git"

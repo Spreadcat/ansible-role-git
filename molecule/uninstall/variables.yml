@@ -1,0 +1,5 @@
+---
+git_repository_owner: root
+git_repository_group: root
+git_repository_directory: /root/git_repos
+git_package_state: absent

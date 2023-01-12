@@ -1,0 +1,10 @@
+---
+- name: INCLUDE OS VARIABLES
+  ansible.builtin.include_vars:
+    file: "../defaults/{{ ansible_os_family|lower }}.yml"
+- name: INCLUDE INSTALL TASKS
+  ansible.builtin.include_tasks: install.yml
+- name: INCLUDE CONFIG TASKS
+  ansible.builtin.include_tasks: config.yml
+  when: _git_package_state is defined
+...

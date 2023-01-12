@@ -1,0 +1,9 @@
+---
+# git_repository_directory: /root/git_repos
+git_repository_owner: root
+git_repository_group: root
+git_config_global:
+  - name: help.autocorrect
+    value: '1'
+  - name: init.defaultBranch
+    value: 'master'

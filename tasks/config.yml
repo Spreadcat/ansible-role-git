@@ -1,0 +1,60 @@
+---
+- name: MANAGE GLOBAL CONFIGURATION
+  community.general.git_config:
+    state: "{{ item.state | default(omit) }}"
+    name: "{{ item.name | default(omit) }}"
+    value: "{{ item.value }}"
+    scope: global
+  become_user: "{{ git_repository_owner }}"
+  become: true
+  loop: "{{ git_config_global }}"
+  when: git_config_global|length > 0
+
+- name: CLONE REMOTE REPOSITORIES
+  become_user: '{{ git_repository_owner }}'
+  become: true
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest | default(git_repository_directory + '/' + item['name']) }}"  # yamllint disable-line rule:line-length
+    clone: "{{ item.clone | default('yes') }}"
+    remote: "{{ item.remote | default('origin') }}"
+    recursive: "{{ item.recursive | default('yes') }}"
+    accept_hostkey: "{{ item.accept_hostkey | default('yes') }}"
+    version: "{{ item.version | default(omit) }}"
+    update: "{{ item.update | bool | default(omit) }}"
+    refspec: "{{ item.refspec | default(omit) }}"
+  async: "{{ git_repository_clone_timeout }}"
+  poll: 5
+  loop: "{{ git_remote_repositories }}"
+  when: git_remote_repositories|length > 0
+
+- name: SET CONFIG FOR EACH REMOTE REPOSITORY
+  ansible.builtin.include_tasks: git_config.yml
+  loop: '{{ git_remote_repositories }}'
+  loop_control:
+    loop_var: git_config_local
+  when:
+    - git_config_local.config is defined
+    - git_config_local.config|length > 0
+
+- name: MANAGE LOCATION FOR BARE REPOSTIORIES
+  ansible.builtin.file:
+    state: directory
+    path: "{{ item.dest | dirname }}"
+    owner: "{{ git_repository_owner }}"
+    group: "{{ git_repository_owner }}"
+    mode: 0750
+    recurse: "{{ item.recurse | default(omit) }}"
+  loop: '{{ git_bare_repositories }}'
+  when: git_bare_repositories|length > 0
+
+- name: CREATE BARE REPOSITORIES  # noqa command-instead-of-module
+  ansible.builtin.command: "git init --bare {{ item.dest }}"
+  args:
+    creates: "{{ item.dest }}/HEAD"
+  become_user: "{{ git_repository_owner }}"
+  loop: '{{ git_bare_repositories }}'
+  when: git_bare_repositories|length > 0
+  async: 10
+  poll: 2
+...
