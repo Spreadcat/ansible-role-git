@@ -44,7 +44,18 @@ provisioner:
       interpreter_python: auto_silent
       callback_whitelist: profile_tasks, timer, yaml
     ssh_connection:
-      pipelining: false
+      pipelining: true
+scenario:
+  name: config
+  test_sequence:
+    - lint
+    - destroy
+    - syntax
+    - create
+    - converge
+    - idempotence
+    - verify
+    - destroy
 verifier:
   name: ansible
 lint: |

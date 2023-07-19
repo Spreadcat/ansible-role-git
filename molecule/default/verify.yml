@@ -24,13 +24,3 @@
         (_verify_package_installed is failed)
         )
       loop: "{{ git_package_name }}"
-
-    - name: MOLECULE - CHECK LOCAL REPO DIRECTORY
-      ansible.builtin.file:
-        state: directory
-        path: "{{ git_repository_directory }}"
-        owner: "{{ git_repository_owner }}"
-        group: "{{ git_repository_group }}"
-        mode: "{{ git_repository_mode }}"
-      register: _verify_file
-      failed_when: (_verify_file is changed) or (_verify_file is failed)

@@ -7,8 +7,7 @@ platforms:
   - name: fedora32
     image: geerlingguy/docker-fedora32-ansible
     tmpfs:
-      - /run
-      - /tmp
+
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     capabilities:
@@ -45,6 +44,18 @@ provisioner:
       callback_whitelist: profile_tasks, timer, yaml
     ssh_connection:
       pipelining: false
+scenario:
+  name: bare
+  test_sequence:
+    - lint
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - destroy
 verifier:
   name: ansible
 lint: |

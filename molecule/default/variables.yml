@@ -1,2 +1,3 @@
 ---
-# There are no variable defined. This is the minimal installation.
+git_repository_owner: root
+git_repository_group: root
