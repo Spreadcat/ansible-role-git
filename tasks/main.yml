@@ -1,7 +1,7 @@
 ---
 - name: Main | Include os variables
   ansible.builtin.include_vars:
-    file: "../defaults/{{ ansible_os_family|lower }}.yml"
+    file: "../defaults/{{ ansible_os_family | lower }}.yml"
 
 - name: Main | Include install tasks
   ansible.builtin.include_tasks: install.yml
