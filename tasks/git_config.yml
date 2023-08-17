@@ -1,5 +1,5 @@
 ---
-- name: 'SET GIT CONFIG FOR REMOTE REPOSITORY {{ git_config_local.name }}'
+- name: 'Git_config | Set git config for remote repository {{ git_config_local.name }}'
   community.general.git_config:
     name: "{{ item.key }}"
     scope: local
