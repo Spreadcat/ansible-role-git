@@ -1,9 +1,9 @@
 ---
-- name: Converge
+- name: Uninstall | Converge
   hosts: all
   tasks:
-    - name: MOLECULE - INCLUDE VARIABLES
+    - name: Converge | Inlcude variables
       ansible.builtin.include_vars: ./variables.yml
-    - name: MOLECULE - FRAMEWORK - INCLUDE ROLE
+    - name: Converge | Include role
       ansible.builtin.include_role:
         name: spreadcat.git

@@ -6,10 +6,10 @@ git_config_global: []
 git_package_state: present
 
 # Default owner for the repositories
-git_repository_owner: "{{ lookup('env', 'USER') }}"
+git_repository_owner: "{{ lookup('ansible.builtin.env', 'USER') }}"
 
 # Default group for the repositories.
-git_repository_group: "{{ lookup('env', 'USER') }}"
+git_repository_group: "{{ lookup('ansible.builtin.env', 'USER') }}"
 
 # Default repository file mode
 git_repository_mode: '0750'
@@ -24,5 +24,5 @@ git_remote_repositories: []
 git_bare_repositories: []
 
 # Default directory for remote repositories
-git_repository_directory: "{{ lookup('env', 'HOME') }}/git_repos"
+git_repository_directory: "{{ lookup('ansible.builtin.env', 'HOME') }}/git_repos"
 ...

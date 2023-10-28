@@ -56,7 +56,7 @@ git_bare_repositories:
 Takes a list of `dest` dicts with the path on where to create a bare repository with GIT. Additionally the parameter `recurse` can be set to re-set also the permissions within existing bare-repositories.
 
 ```yaml
-git_repository_directory: "{{ lookup('env', 'HOME') }}./git_repos"
+git_repository_directory: "{{ lookup('ansible.builtin.env', 'HOME') }}./git_repos"
 ```
 
 String setting the location of the cloned GIT repositories shall be stored. The default is `~/git_repos`.
@@ -70,13 +70,13 @@ git_package_state: present
 Setting to define the overall package installation status. Takes `present`, `absent`, `latest`, etc.
 
 ```yaml
-git_repository_owner: "{{ lookup('env', 'USER') }}"
+git_repository_owner: "{{ lookup('ansible.builtin.env', 'USER') }}"
 ```
 
 Let's you change the owner of the repositories and files inside the repositories. Defaults to the current user running the Ansible role.
 
 ```yaml
-git_repository_group: "{{ lookup('env', 'USER') }}"
+git_repository_group: "{{ lookup('ansible.builtin.env', 'USER') }}"
 ```
 
 Let's you change the group of the repositories and files inside the repositories. Defaults to the group of the current user running the Ansible role.

@@ -1,12 +1,13 @@
 ---
-- hosts: all
+- name: Uninstall | Prepare
+  hosts: all
   gather_facts: true
   tasks:
 
-    - name: MOLECULE - INCLUDE VARIABLES
+    - name: Prepare | Include variables
       ansible.builtin.include_vars: ./variables.yml
 
-    - name: MOLECULE - DEPLOY GIT STANDARD
+    - name: Prepare | Include roles
       ansible.builtin.include_role:
         name: spreadcat.git
       vars:

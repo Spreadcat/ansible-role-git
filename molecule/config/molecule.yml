@@ -48,7 +48,6 @@ provisioner:
 scenario:
   name: config
   test_sequence:
-    - lint
     - destroy
     - syntax
     - create
@@ -58,7 +57,3 @@ scenario:
     - destroy
 verifier:
   name: ansible
-lint: |
-  set -e
-  yamllint .
-  ansible-lint .
